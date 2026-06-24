@@ -4,6 +4,13 @@ All notable changes to WordBloom will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.5.1] - 2026-06-24
+
+### Fixed
+- Share now puts the game link inside the message text, so the link travels
+  with the screenshot — many apps drop the separate URL field when an image
+  is attached, which left shares without a link.
+
 ## [1.5.0] - 2026-06-24
 
 ### Added

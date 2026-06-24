@@ -229,14 +229,18 @@ const Game = (() => {
 
   async function shareCard(mode, text) {
     const url = location.origin + location.pathname;
+    const withLink = text + '\n' + url;   // link must live in the text: many apps drop the url field when a file is attached
     try {
       const blob = await makeCard(mode);
       if (blob && navigator.canShare) {
         const file = new File([blob], 'wordbloom-' + mode + '-' + State.level + '.png', { type: 'image/png' });
-        if (navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], text, url }); return; }
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], text: withLink, title: 'WordBloom' });
+          return;
+        }
       }
-      if (navigator.share) { await navigator.share({ title: 'WordBloom', text, url }); return; }
-      fallbackShare(text + ' ' + url);
+      if (navigator.share) { await navigator.share({ title: 'WordBloom', text: withLink, url }); return; }
+      fallbackShare(withLink);
     } catch (e) { /* cancelled */ }
   }
 
