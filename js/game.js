@@ -1,6 +1,7 @@
 /* game.js — ties the wheel, board, audio and state together. */
 const Game = (() => {
-  const HINT_COST = 25;
+  const HINT_COST = 25;          // reveal a single letter
+  const REVEAL_WORD_COST = 60;   // reveal a whole word
   const WIN_REWARD = 20;
   const BONUS_COINS = 3;
 
@@ -33,7 +34,10 @@ const Game = (() => {
     };
     Wheel.init({ onSubmit });
     els.hintCost.textContent = HINT_COST;
+    const revealCost = document.getElementById('revealCost');
+    if (revealCost) revealCost.textContent = REVEAL_WORD_COST;
     document.getElementById('hintBtn').addEventListener('click', onHint);
+    document.getElementById('revealBtn').addEventListener('click', onRevealWord);
     document.getElementById('shuffleBtn').addEventListener('click', () => { Sound.tap(); Wheel.shuffle(); });
     document.getElementById('nextBtn').addEventListener('click', nextLevel);
     els.muteBtn.addEventListener('click', toggleMute);
@@ -90,6 +94,17 @@ const Game = (() => {
       State.addCoins(-HINT_COST);
       updateHud();
       Sound.coin();
+      if (Board.isComplete()) win();
+    }
+  }
+
+  function onRevealWord() {
+    if (Board.isComplete() || !Board.hasUnfound()) return;
+    if (State.coins < REVEAL_WORD_COST) { toast('Not enough coins'); Sound.wrong(); return; }
+    if (Board.revealWordHint()) {
+      State.addCoins(-REVEAL_WORD_COST);
+      updateHud();
+      Sound.found(); haptic(15);
       if (Board.isComplete()) win();
     }
   }

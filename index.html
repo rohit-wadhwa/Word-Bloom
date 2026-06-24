@@ -56,8 +56,11 @@
       <!-- Floating word preview while tracing (absolute overlay — never reflows the wheel) -->
       <div id="preview" class="preview" aria-hidden="true"></div>
       <div class="controls">
-        <button id="hintBtn" class="ctrl-btn" title="Hint">
+        <button id="hintBtn" class="ctrl-btn" title="Reveal a letter">
           💡<span class="cost"><span class="coin-dot">◉</span><span id="hintCost">25</span></span>
+        </button>
+        <button id="revealBtn" class="ctrl-btn" title="Reveal a whole word">
+          🎯<span class="cost"><span class="coin-dot">◉</span><span id="revealCost">60</span></span>
         </button>
         <button id="shuffleBtn" class="ctrl-btn" title="Shuffle">🔀</button>
       </div>

@@ -2,7 +2,7 @@
 const State = (() => {
   const KEY = 'wordbloom.save.v1';
   const LEGACY_KEY = 'zenwords.save.v1';   // migrate older saves so progress is kept
-  const DEFAULTS = { level: 1, coins: 100, muted: false, seenHelp: false };
+  const DEFAULTS = { level: 1, coins: 150, muted: false, seenHelp: false };
 
   let data = load();
 

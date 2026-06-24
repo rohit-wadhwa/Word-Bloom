@@ -4,6 +4,19 @@ All notable changes to WordBloom will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] - 2026-06-24
+
+### Changed
+- Reworked difficulty: a gentle ramp from 3-letter wheels (2 words) up to
+  7-letter wheels with ~12 words, spread over many levels.
+- The board now uses only common words; rarer formable words are optional
+  bonus words (no more obscure required words like an early-level "HIST").
+- Varied the puzzle order so consecutive levels feel fresh, not repetitive.
+
+### Added
+- "Reveal a whole word" hint alongside the single-letter hint; shuffle stays free.
+- Starting coins increased to 150.
+
 ## [1.1.0] - 2026-06-24
 
 ### Added

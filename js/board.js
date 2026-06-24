@@ -99,7 +99,20 @@ const Board = (() => {
     return false;
   }
 
+  // Reveal-word hint: fully reveal one unfound word (the shortest still hidden).
+  function revealWordHint() {
+    const candidates = words.filter(w => !w.found);
+    if (!candidates.length) return false;
+    candidates.sort((a, b) => a.cells.length - b.cells.length);
+    const w = candidates[0];
+    w.cells.forEach(c => revealCell(c, 'hint'));
+    w.found = true;
+    return true;
+  }
+
+  function hasUnfound() { return words.some(w => !w.found); }
+
   function isComplete() { return words.length > 0 && words.every(w => w.found); }
 
-  return { render, submitWord, useHint, isComplete, fitTiles };
+  return { render, submitWord, useHint, revealWordHint, hasUnfound, isComplete, fitTiles };
 })();

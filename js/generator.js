@@ -43,7 +43,7 @@ const Generator = (() => {
     // deduped by letter-signature so anagram puzzles never repeat across levels.
     const bySig = new Map();
     WORDS
-      .filter(w => w.length >= 4 && w.length <= 7 && new Set(w).size === w.length)
+      .filter(w => w.length >= 3 && w.length <= 7 && new Set(w).size === w.length)
       .sort((a, b) => a.length - b.length || RANK.get(a) - RANK.get(b))
       .forEach(w => {
         const sig = w.length + ':' + [...w].sort().join('');
@@ -153,43 +153,80 @@ const Generator = (() => {
     return { rows, cols, placed };
   }
 
+  /* ---- difficulty shaping ----
+   * Wheel grows slowly (3→7 letters) over many levels, and the number of board
+   * words climbs, so the game ramps from trivially easy to genuinely big.
+   */
+  function wheelLen(level) {
+    if (level <= 3) return 3;
+    if (level <= 8) return 4;
+    if (level <= 15) return 5;
+    if (level <= 25) return 6;
+    return 7;
+  }
+  function tierStart(len) {
+    return len === 3 ? 1 : len === 4 ? 4 : len === 5 ? 9 : len === 6 ? 16 : 26;
+  }
+  function wantWords(level) { return Math.min(12, 2 + Math.floor(level / 3)); }
+
+  // Anchor (wheel) familiarity cutoff by length: short wheels stay very familiar;
+  // long wheels allow a wider vocabulary so deep levels stay fresh (board words are
+  // always filtered to BOARD_COMMON, so the words you must find stay common regardless).
+  function anchorCutoff(len) { return len <= 4 ? 3000 : len <= 6 ? 5500 : 9000; }
+  const BOARD_COMMON = 4200;    // ONLY common words go on the board; rarer ones become bonus
+
+  function strHash(s) {
+    let h = 2166136261;
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return h >>> 0;
+  }
+  function commonFormable(anchor) {
+    return formableFrom(anchor).filter(w => RANK.get(w) < BOARD_COMMON);
+  }
+  // Per-tier anchor pools: common wheels with enough common sub-words, ordered by a
+  // stable hash so the level sequence feels varied instead of "most-common-first".
+  const tierPools = {};
+  function poolFor(len) {
+    if (!tierPools[len]) {
+      tierPools[len] = anchors
+        .filter(a => a.length === len
+          && RANK.get(a) < anchorCutoff(len)
+          && commonFormable(a).length >= (len === 3 ? 2 : 3))
+        .sort((a, b) => strHash(a) - strHash(b));
+    }
+    return tierPools[len];
+  }
+
   /* Generate (and cache) the puzzle for a given level number (1-based). */
   const cache = new Map();
-  const validPools = {};
   function generate(level) {
     if (cache.has(level)) return cache.get(level);
     const rand = rng(level * 2654435761);
 
-    // difficulty: wheel size grows slowly with level (len4: lv1-10, len5: 11-20, len6: 21-30, len7: 31+)
-    const targetLen = Math.min(7, 4 + Math.floor((level - 1) / 10));
-    // only keep anchors that yield enough words (memoized per length) so the index maps cleanly
-    if (!validPools[targetLen]) {
-      validPools[targetLen] = anchors.filter(a => a.length === targetLen && formableFrom(a).length >= 5);
-    }
-    const pool = validPools[targetLen];
-    // deterministic, path-independent index within the band → distinct consecutive puzzles
-    const bandStart = (targetLen - 4) * 10;          // first level number (0-based) of this band
-    let baseIdx = ((level - 1 - bandStart) % pool.length + pool.length) % pool.length;
+    const len = wheelLen(level);
+    const pool = poolFor(len);
+    if (!pool.length) return null;
+    // deterministic, path-independent index within the tier → distinct consecutive puzzles
+    const within = level - tierStart(len);
+    const baseIdx = ((within % pool.length) + pool.length) % pool.length;
+    const want = wantWords(level);
 
     for (let attempt = 0; attempt < pool.length; attempt++) {
       const anchor = pool[(baseIdx + attempt) % pool.length];
-      const formable = formableFrom(anchor);
-      if (formable.length < 4) continue;
+      const common = commonFormable(anchor);
+      if (common.length < 2) continue;
 
-      // how many words to interlock on the board (grows with level)
-      const wantPlaced = Math.min(9, 3 + Math.floor(level / 6));
-      // choose board words: anchor + most-common shorter words
-      const others = formable.filter(w => w !== anchor);
-      const chosen = [anchor, ...others.slice(0, Math.max(wantPlaced + 4, 8))];
-      // longest first helps the crossword interlock
-      chosen.sort((a, b) => b.length - a.length || RANK.get(a) - RANK.get(b));
+      // board words: the showcase anchor + the most common formable words, capped to `want`
+      let cand = common.filter(w => w !== anchor).slice(0, want);
+      cand.push(anchor);
+      cand = [...new Set(cand)].sort((a, b) => b.length - a.length || RANK.get(a) - RANK.get(b));
 
-      const cross = buildCrossword(chosen, rand);
-      if (!cross || cross.placed.length < 3) continue;
+      const cross = buildCrossword(cand, rand);
+      if (!cross || cross.placed.length < 2) continue;
 
-      // trim to the words actually placed; the rest of `formable` are bonuses
       const boardWords = new Set(cross.placed.map(p => p.word));
-      const bonusWords = new Set(formable.filter(w => !boardWords.has(w)));
+      // bonus = every other formable word (extra common ones + rarer words) — never required
+      const bonusWords = new Set(formableFrom(anchor).filter(w => !boardWords.has(w)));
 
       const puzzle = {
         level,
