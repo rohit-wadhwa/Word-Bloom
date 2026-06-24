@@ -4,6 +4,19 @@ All notable changes to WordBloom will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-06-24
+
+### Added
+- Branded splash / loading screen.
+- Progressive Web App support: installable on mobile, works fully offline
+  (web manifest + service worker), with app icons and iOS/Android meta tags.
+- Haptic feedback on found/incorrect/win, and a confetti burst on level complete.
+
+### Changed
+- Save key migrated to `wordbloom.save.v1` (existing progress is preserved).
+- Wheel now captures the pointer so fast swipes leaving the wheel don't drop letters.
+- Wheel capped by viewport height to avoid clipping on short screens; larger tap targets.
+
 ## [1.0.0] - 2026-06-24
 
 ### Added

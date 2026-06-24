@@ -103,6 +103,8 @@ const Wheel = (() => {
 
   function onDown(e) {
     e.preventDefault();
+    // capture so fast swipes that leave the wheel's bounds keep firing pointermove
+    try { wheelEl.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
     dragging = true;
     selected = [];
     pointer = local(e);

@@ -1,14 +1,21 @@
 /* state.js — persistent game state (localStorage) */
 const State = (() => {
-  const KEY = 'zenwords.save.v1';
+  const KEY = 'wordbloom.save.v1';
+  const LEGACY_KEY = 'zenwords.save.v1';   // migrate older saves so progress is kept
   const DEFAULTS = { level: 1, coins: 100, muted: false, seenHelp: false };
 
   let data = load();
 
   function load() {
     try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) return Object.assign({}, DEFAULTS, JSON.parse(raw));
+      const cur = localStorage.getItem(KEY);
+      if (cur) return Object.assign({}, DEFAULTS, JSON.parse(cur));
+      const legacy = localStorage.getItem(LEGACY_KEY);
+      if (legacy) {
+        const migrated = Object.assign({}, DEFAULTS, JSON.parse(legacy));
+        localStorage.setItem(KEY, JSON.stringify(migrated));   // persist under new key now
+        return migrated;
+      }
     } catch (e) { /* ignore */ }
     return Object.assign({}, DEFAULTS);
   }

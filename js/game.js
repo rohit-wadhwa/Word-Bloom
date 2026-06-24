@@ -16,6 +16,7 @@ const Game = (() => {
 
   let puzzle = null;
   let foundBonus = new Set();
+  let won = false;
   let els = {};
 
   function init() {
@@ -45,6 +46,7 @@ const Game = (() => {
     puzzle = Generator.generate(level);
     if (!puzzle) { level = 1; puzzle = Generator.generate(1); }
     foundBonus = new Set();
+    won = false;
     State.level = level;
     const theme = THEMES[(level - 1) % THEMES.length];
     document.documentElement.style.setProperty('--accent', theme.accent);
@@ -61,7 +63,7 @@ const Game = (() => {
     const word = raw.toUpperCase();
     const res = Board.submitWord(word);
     if (res === 'found') {
-      Sound.found();
+      Sound.found(); haptic(15);
       if (Board.isComplete()) return win();
       return;
     }
@@ -73,11 +75,11 @@ const Game = (() => {
       foundBonus.add(word);
       State.addCoins(BONUS_COINS);
       updateHud();
-      Sound.bonus();
+      Sound.bonus(); haptic(20);
       toast('Bonus +' + BONUS_COINS + ' ◉');
       return;
     }
-    Sound.wrong();
+    Sound.wrong(); haptic([0, 25, 40, 25]);
     shakePreview();
   }
 
@@ -93,11 +95,34 @@ const Game = (() => {
   }
 
   function win() {
-    Sound.win();
+    if (won) return;          // idempotent per level
+    won = true;
+    Sound.win(); haptic([0, 40, 30, 60]);
+    confetti();
     State.addCoins(WIN_REWARD);
     updateHud();
     els.winReward.textContent = WIN_REWARD;
     setTimeout(() => els.winOverlay.classList.remove('hidden'), 550);
+  }
+
+  function haptic(pattern) {
+    if (navigator.vibrate) { try { navigator.vibrate(pattern); } catch (e) { /* ignore */ } }
+  }
+
+  function confetti() {
+    const colors = ['#ffd34d', '#46c178', '#ff7eb6', '#6c63ff', '#ff9f43', '#4dd0e1'];
+    const layer = document.createElement('div');
+    layer.className = 'confetti';
+    for (let i = 0; i < 44; i++) {
+      const p = document.createElement('i');
+      p.style.left = (Math.random() * 100) + 'vw';
+      p.style.background = colors[i % colors.length];
+      p.style.animationDuration = (1.6 + Math.random() * 1.4) + 's';
+      p.style.animationDelay = (Math.random() * 0.3) + 's';
+      layer.appendChild(p);
+    }
+    document.body.appendChild(layer);
+    setTimeout(() => layer.remove(), 3600);
   }
 
   function nextLevel() { loadLevel(State.level + 1); }

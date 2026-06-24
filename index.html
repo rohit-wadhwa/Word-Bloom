@@ -3,11 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="#6c63ff" />
+  <meta name="theme-color" content="#3f6fd1" />
+  <meta name="description" content="A calming word-connect crossword puzzle game. Swipe letters to fill the crossword. No timer, no pressure." />
   <title>WordBloom — Relax Word Puzzle</title>
+
+  <!-- PWA / installable + offline -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="WordBloom" />
+
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+  <!-- Splash / loading screen -->
+  <div id="splash" class="splash">
+    <div class="splash-inner">
+      <img src="assets/icon.svg" alt="" class="splash-logo" width="104" height="104" />
+      <h1 class="splash-title">WordBloom</h1>
+      <p class="splash-tagline">Relax · Connect · Bloom</p>
+      <div class="splash-dots"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+
   <div id="bg" class="bg"></div>
 
   <main id="app" class="app">
