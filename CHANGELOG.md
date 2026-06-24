@@ -4,6 +4,18 @@ All notable changes to WordBloom will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.4.0] - 2026-06-24
+
+### Added
+- Restart option (in the ⓘ menu) to replay the current level from scratch.
+- Share your win as a generated image card via the native share sheet —
+  sent to one friend/app at a time.
+- "Ask a friend for help" share that includes the level's letters so a
+  friend can help you solve it.
+
+### Changed
+- Service worker cache bumped to v4; build version 1.4.0.
+
 ## [1.3.0] - 2026-06-24
 
 ### Added

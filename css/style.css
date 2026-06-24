@@ -180,4 +180,6 @@ body {
 }
 .secondary-btn:active { transform: translateY(1px); }
 #aboutOverlay .primary-btn { width: 100%; }
+.overlay-actions { display: flex; gap: 10px; }
+.overlay-actions .secondary-btn, .overlay-actions .primary-btn { flex: 1; margin: 0; padding: 13px 10px; }
 .splash-version { margin: 18px 0 0; font-size: 12px; font-weight: 600; opacity: .7; letter-spacing: .5px; }

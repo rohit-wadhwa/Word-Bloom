@@ -1,6 +1,6 @@
 /* main.js — bootstrap: splash, version, load words, register SW, wire overlays. */
 (async function () {
-  const BUILD = { version: '1.3.0', date: '2026-06-24' };
+  const BUILD = { version: '1.4.0', date: '2026-06-24' };
 
   const splash = document.getElementById('splash');
   const splashStart = performance.now();

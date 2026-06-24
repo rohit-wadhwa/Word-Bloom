@@ -40,6 +40,10 @@ const Game = (() => {
     document.getElementById('revealBtn').addEventListener('click', onRevealWord);
     document.getElementById('shuffleBtn').addEventListener('click', () => { Sound.tap(); Wheel.shuffle(); });
     document.getElementById('nextBtn').addEventListener('click', nextLevel);
+    document.getElementById('shareBtn').addEventListener('click', shareWin);
+    const aboutOverlay = document.getElementById('aboutOverlay');
+    document.getElementById('restartBtn').addEventListener('click', () => { aboutOverlay.classList.add('hidden'); restartLevel(); });
+    document.getElementById('helpShareBtn').addEventListener('click', () => { aboutOverlay.classList.add('hidden'); shareHelp(); });
     els.muteBtn.addEventListener('click', toggleMute);
     refreshMute();
     window.addEventListener('resize', () => Board.fitTiles());
@@ -141,6 +145,86 @@ const Game = (() => {
   }
 
   function nextLevel() { loadLevel(State.level + 1); }
+  function restartLevel() { loadLevel(State.level); }
+
+  /* ---- sharing (native share sheet → one friend/app at a time) ---- */
+  function roundRect(x, rx, ry, w, h, r) {
+    x.beginPath();
+    x.moveTo(rx + r, ry);
+    x.arcTo(rx + w, ry, rx + w, ry + h, r);
+    x.arcTo(rx + w, ry + h, rx, ry + h, r);
+    x.arcTo(rx, ry + h, rx, ry, r);
+    x.arcTo(rx, ry, rx + w, ry, r);
+    x.closePath();
+  }
+
+  // Render a shareable PNG card of the just-solved crossword.
+  function makeShareCard() {
+    return new Promise((resolve) => {
+      try {
+        const pad = 36, W = 640, gap = 5;
+        const cols = puzzle.cols, rows = puzzle.rows;
+        const tile = Math.max(26, Math.min(60, Math.floor((W - pad * 2) / cols)));
+        const gridW = tile * cols, gridH = tile * rows;
+        const headerH = 170, footerH = 80, H = headerH + gridH + footerH;
+        const s = 2;
+        const cv = document.createElement('canvas'); cv.width = W * s; cv.height = H * s;
+        const x = cv.getContext('2d'); x.scale(s, s);
+        const theme = THEMES[(State.level - 1) % THEMES.length];
+        const bg = x.createLinearGradient(0, 0, 0, H);
+        bg.addColorStop(0, '#ffffff'); bg.addColorStop(1, '#eaf0fb');
+        x.fillStyle = bg; x.fillRect(0, 0, W, H);
+        x.textAlign = 'center';
+        x.fillStyle = theme.accent; x.font = '800 42px -apple-system, Arial';
+        x.fillText('WordBloom 🌿', W / 2, 64);
+        x.fillStyle = '#2a2f45'; x.font = '800 30px -apple-system, Arial';
+        x.fillText('Level ' + State.level + ' Complete!', W / 2, 112);
+        const ox = (W - gridW) / 2, oy = headerH;
+        x.textBaseline = 'middle';
+        for (const p of puzzle.placed) for (const c of p.cells) {
+          const cx = ox + c.c * tile, cy = oy + c.r * tile;
+          roundRect(x, cx + gap / 2, cy + gap / 2, tile - gap, tile - gap, 8);
+          x.fillStyle = theme.accent; x.fill();
+          x.fillStyle = '#fff'; x.font = '800 ' + Math.floor(tile * 0.5) + 'px -apple-system, Arial';
+          x.fillText(c.ch, cx + tile / 2, cy + tile / 2 + 1);
+        }
+        x.textBaseline = 'alphabetic';
+        x.fillStyle = '#8a90a2'; x.font = '600 22px -apple-system, Arial';
+        x.fillText('Play at ' + location.host, W / 2, headerH + gridH + 46);
+        cv.toBlob((b) => resolve(b), 'image/png');
+      } catch (e) { resolve(null); }
+    });
+  }
+
+  async function shareWin() {
+    const url = location.origin + location.pathname;
+    const text = 'I solved Level ' + State.level + ' on WordBloom! 🌿 Can you?';
+    try {
+      const blob = await makeShareCard();
+      if (blob && navigator.canShare) {
+        const file = new File([blob], 'wordbloom-level-' + State.level + '.png', { type: 'image/png' });
+        if (navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], text, url }); return; }
+      }
+      if (navigator.share) { await navigator.share({ title: 'WordBloom', text, url }); return; }
+      fallbackShare(text + ' ' + url);
+    } catch (e) { /* cancelled */ }
+  }
+
+  async function shareHelp() {
+    const url = location.origin + location.pathname;
+    const text = 'Stuck on Level ' + State.level + ' of WordBloom! Letters: '
+      + puzzle.letters.join('') + '. Help me solve it? 🌿';
+    try {
+      if (navigator.share) { await navigator.share({ title: 'WordBloom', text, url }); return; }
+      fallbackShare(text + ' ' + url);
+    } catch (e) { /* cancelled */ }
+  }
+
+  function fallbackShare(s) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(s).then(() => toast('Copied to clipboard')).catch(() => toast('Sharing not supported'));
+    } else { toast('Sharing not supported'); }
+  }
 
   function updateHud() { els.coinCount.textContent = State.coins; }
 
