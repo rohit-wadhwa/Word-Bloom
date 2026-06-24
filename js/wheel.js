@@ -132,6 +132,7 @@ const Wheel = (() => {
 
   function select(i) {
     selected.push(i);
+    Sound.note(selected.length - 1);   // rising piano note per connected letter
     nodes[i].el.classList.add('sel');
     nodes[i].el.classList.remove('pulse'); void nodes[i].el.offsetWidth; nodes[i].el.classList.add('pulse');
   }

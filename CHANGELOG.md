@@ -4,6 +4,19 @@ All notable changes to WordBloom will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.5.0] - 2026-06-24
+
+### Added
+- On-screen Share button (↗) in the top bar — share a win or ask a friend for help.
+- Help share now attaches an image of your current puzzle (progress + the
+  available wheel letters) so anyone can see it and help.
+
+### Changed
+- Warm piano-style sound: connecting letters plays gently rising notes
+  (calming, Zen-like), with pleasant chords for found words and wins.
+- Clearer high-contrast top-bar buttons; the menu is now a ☰ icon.
+- Audio nodes are torn down after each note; small-screen HUD tuned.
+
 ## [1.4.0] - 2026-06-24
 
 ### Added
