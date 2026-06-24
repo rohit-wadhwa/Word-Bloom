@@ -1,7 +1,16 @@
-/* main.js — bootstrap: splash, load words, register SW, wire overlays, start. */
+/* main.js — bootstrap: splash, version, load words, register SW, wire overlays. */
 (async function () {
+  const BUILD = { version: '1.3.0', date: '2026-06-24' };
+
   const splash = document.getElementById('splash');
   const splashStart = performance.now();
+
+  // show build version (splash + about panel)
+  const vText = 'v' + BUILD.version;
+  const splashVersion = document.getElementById('splashVersion');
+  const aboutVersion = document.getElementById('aboutVersion');
+  if (splashVersion) splashVersion.textContent = vText;
+  if (aboutVersion) aboutVersion.textContent = vText + ' · ' + BUILD.date;
 
   // register service worker (PWA / offline) — non-blocking
   if ('serviceWorker' in navigator) {
@@ -13,12 +22,35 @@
   window.addEventListener('pointerdown', unlock);
 
   const helpOverlay = document.getElementById('helpOverlay');
-  const startBtn = document.getElementById('startBtn');
-  startBtn.addEventListener('click', () => {
+  document.getElementById('startBtn').addEventListener('click', () => {
     State.seenHelp = true;
     helpOverlay.classList.add('hidden');
     Sound.unlock();
   });
+
+  // About / menu panel
+  const aboutOverlay = document.getElementById('aboutOverlay');
+  document.getElementById('infoBtn').addEventListener('click', () => aboutOverlay.classList.remove('hidden'));
+  document.getElementById('aboutCloseBtn').addEventListener('click', () => aboutOverlay.classList.add('hidden'));
+  aboutOverlay.addEventListener('click', (e) => { if (e.target === aboutOverlay) aboutOverlay.classList.add('hidden'); });
+  document.getElementById('hardRefreshBtn').addEventListener('click', hardRefresh);
+
+  // Hard refresh: drop the service worker + caches and reload from network.
+  async function hardRefresh() {
+    const btn = document.getElementById('hardRefreshBtn');
+    btn.textContent = 'Updating…'; btn.disabled = true;
+    try {
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map((r) => r.unregister()));
+      }
+      if (window.caches) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map((k) => caches.delete(k)));
+      }
+    } catch (e) { /* ignore */ }
+    location.reload();
+  }
 
   function hideSplash() {
     splash.classList.add('hide');
@@ -35,7 +67,6 @@
 
   Game.init();
 
-  // keep the splash up briefly so it doesn't flash on fast loads
   const elapsed = performance.now() - splashStart;
   setTimeout(hideSplash, Math.max(0, 900 - elapsed));
 })();

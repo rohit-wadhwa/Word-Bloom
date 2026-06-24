@@ -27,6 +27,7 @@
       <h1 class="splash-title">WordBloom</h1>
       <p class="splash-tagline">Relax · Connect · Bloom</p>
       <div class="splash-dots"><span></span><span></span><span></span></div>
+      <p class="splash-version" id="splashVersion"></p>
     </div>
   </div>
 
@@ -39,6 +40,7 @@
         <span class="level-label">Level <span id="levelNum">1</span></span>
       </div>
       <div class="hud-right">
+        <button id="infoBtn" class="icon-btn" title="About" aria-label="About / menu">ⓘ</button>
         <button id="muteBtn" class="icon-btn" title="Sound" aria-label="Toggle sound">🔊</button>
         <div class="coins" title="Coins">
           <span class="coin-dot">◉</span><span id="coinCount">0</span>
@@ -93,6 +95,18 @@
         <li>No timer. No pressure. Just relax. 🌿</li>
       </ul>
       <button id="startBtn" class="primary-btn">Play</button>
+    </div>
+  </div>
+
+  <!-- About / menu overlay -->
+  <div id="aboutOverlay" class="overlay hidden">
+    <div class="overlay-card">
+      <div class="overlay-emoji">🌿</div>
+      <h2>WordBloom</h2>
+      <p class="about-version" id="aboutVersion">v—</p>
+      <a class="bmc-btn" href="https://buymeacoffee.com/rohit.wadhwa" target="_blank" rel="noopener noreferrer">☕ Buy me a coffee</a>
+      <button id="hardRefreshBtn" class="secondary-btn">↻ Hard refresh (get latest)</button>
+      <button id="aboutCloseBtn" class="primary-btn">Close</button>
     </div>
   </div>
 

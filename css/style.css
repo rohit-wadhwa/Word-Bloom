@@ -164,3 +164,20 @@ body {
   padding: 13px 32px; border-radius: 26px; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.2);
 }
 .primary-btn:active { transform: translateY(1px); }
+
+/* ---------- About / menu panel ---------- */
+.about-version { color: #8a90a2; font-size: 13px; font-weight: 700; margin: -2px 0 18px; }
+.bmc-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+  background: #ffdd00; color: #000; font-weight: 800; font-size: 16px;
+  padding: 13px 18px; border-radius: 16px; text-decoration: none; margin-bottom: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,.15);
+}
+.bmc-btn:active { transform: translateY(1px); }
+.secondary-btn {
+  display: block; width: 100%; border: none; background: #eef0f6; color: #333;
+  font-weight: 700; font-size: 15px; padding: 12px; border-radius: 16px; cursor: pointer; margin-bottom: 12px;
+}
+.secondary-btn:active { transform: translateY(1px); }
+#aboutOverlay .primary-btn { width: 100%; }
+.splash-version { margin: 18px 0 0; font-size: 12px; font-weight: 600; opacity: .7; letter-spacing: .5px; }

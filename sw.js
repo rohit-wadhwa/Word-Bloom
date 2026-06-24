@@ -5,7 +5,7 @@
  *   - Static assets (icons, word list): CACHE-FIRST for speed (they rarely change).
  * Bump CACHE on releases to purge old entries.
  */
-const CACHE = 'wordbloom-v2';
+const CACHE = 'wordbloom-v3';
 const ASSETS = [
   './', 'index.html', 'css/style.css',
   'js/state.js', 'js/audio.js', 'js/generator.js', 'js/board.js',

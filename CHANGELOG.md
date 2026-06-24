@@ -4,6 +4,17 @@ All notable changes to WordBloom will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.3.0] - 2026-06-24
+
+### Added
+- About / menu panel (ⓘ in the top bar) showing the build version, a
+  "Buy me a coffee" button, and a "Hard refresh" action.
+- Hard refresh clears the service worker and caches and reloads from the
+  network, so players can always pull the latest deployed build.
+
+### Changed
+- Service worker cache bumped to v3.
+
 ## [1.2.0] - 2026-06-24
 
 ### Changed
