@@ -33,11 +33,28 @@
 
   <div id="bg" class="bg"></div>
 
+  <!-- Home / menu screen -->
+  <div id="home" class="home hidden">
+    <div class="home-inner">
+      <img src="assets/icon.svg" class="home-logo" width="92" height="92" alt="" />
+      <h1 class="home-title">WordBloom</h1>
+      <p class="home-tagline">Relax · Connect · Bloom</p>
+      <div class="home-stats">
+        <div><b id="homeStreak">0</b><small>🔥 Streak</small></div>
+        <div><b id="homeCoins">150</b><small>◉ Coins</small></div>
+        <div><b id="homeLevels">0</b><small>✓ Solved</small></div>
+      </div>
+      <button id="playBtn" class="play-btn">Play · Level <span id="homeLevel">1</span></button>
+      <button id="homeHelpBtn" class="text-btn">How to play</button>
+    </div>
+  </div>
+
   <main id="app" class="app">
     <!-- Top HUD -->
     <header class="hud">
       <div class="hud-left">
         <span class="level-label">Level <span id="levelNum">1</span></span>
+        <span class="streak" id="streak" title="Daily streak">🔥 <span id="streakNum">0</span></span>
       </div>
       <div class="hud-right">
         <button id="shareScreenBtn" class="icon-btn" title="Share / ask a friend for help" aria-label="Share or ask for help">↗</button>
@@ -66,6 +83,7 @@
           🎯<span class="cost"><span class="coin-dot">◉</span><span id="revealCost">60</span></span>
         </button>
         <button id="shuffleBtn" class="ctrl-btn" title="Shuffle">🔀</button>
+        <button id="jarBtn" class="ctrl-btn" title="Extra words">✨<span class="cost" id="jarBadge">0/5</span></button>
       </div>
       <div id="wheel" class="wheel" aria-label="Letter wheel">
         <svg id="wheelLines" class="wheel-lines"></svg>
@@ -102,12 +120,31 @@
     </div>
   </div>
 
+  <!-- Extra words (bonus jar) overlay -->
+  <div id="extraOverlay" class="overlay hidden">
+    <div class="overlay-card">
+      <div class="overlay-emoji">✨</div>
+      <h2>Extra Words</h2>
+      <p class="about-version">Bonus words you found beyond the puzzle</p>
+      <div id="extraList" class="extra-list"><span class="extra-empty">None yet — trace extra words for coins!</span></div>
+      <div class="jar-bar"><div id="jarFill" class="jar-fill"></div></div>
+      <p class="jar-label"><span id="jarProg">0/5</span> to a <span class="coin-dot">◉</span>+25 reward</p>
+      <button id="extraCloseBtn" class="primary-btn">Close</button>
+    </div>
+  </div>
+
   <!-- About / menu overlay -->
   <div id="aboutOverlay" class="overlay hidden">
     <div class="overlay-card">
       <div class="overlay-emoji">🌿</div>
       <h2>WordBloom</h2>
       <p class="about-version" id="aboutVersion">v—</p>
+      <div class="stats-row">
+        <div><b id="stLevels">0</b><span>Levels</span></div>
+        <div><b id="stWords">0</b><span>Words</span></div>
+        <div><b id="stBonus">0</b><span>Bonus</span></div>
+        <div><b id="stStreak">0</b><span>Best 🔥</span></div>
+      </div>
       <button id="helpShareBtn" class="secondary-btn">🆘 Ask a friend for help</button>
       <button id="restartBtn" class="secondary-btn">↺ Restart this level</button>
       <a class="bmc-btn" href="https://buymeacoffee.com/rohit.wadhwa" target="_blank" rel="noopener noreferrer">☕ Buy me a coffee</a>

@@ -4,6 +4,8 @@ const Game = (() => {
   const REVEAL_WORD_COST = 60;   // reveal a whole word
   const WIN_REWARD = 20;
   const BONUS_COINS = 3;
+  const JAR_GOAL = 5;            // bonus words per jar milestone
+  const JAR_REWARD = 25;        // coins awarded when the jar fills
 
   // Per-level palette (accent + calming background), cycled by level.
   const THEMES = [
@@ -31,7 +33,10 @@ const Game = (() => {
       winOverlay: document.getElementById('winOverlay'),
       winReward: document.getElementById('winReward'),
       muteBtn: document.getElementById('muteBtn'),
+      streakNum: document.getElementById('streakNum'),
+      jarBadge: document.getElementById('jarBadge'),
     };
+    State.touchDaily();
     Wheel.init({ onSubmit });
     els.hintCost.textContent = HINT_COST;
     const revealCost = document.getElementById('revealCost');
@@ -39,6 +44,8 @@ const Game = (() => {
     document.getElementById('hintBtn').addEventListener('click', onHint);
     document.getElementById('revealBtn').addEventListener('click', onRevealWord);
     document.getElementById('shuffleBtn').addEventListener('click', () => { Sound.tap(); Wheel.shuffle(); });
+    document.getElementById('jarBtn').addEventListener('click', openExtra);
+    document.getElementById('extraCloseBtn').addEventListener('click', () => document.getElementById('extraOverlay').classList.add('hidden'));
     document.getElementById('nextBtn').addEventListener('click', nextLevel);
     document.getElementById('shareBtn').addEventListener('click', shareWin);
     document.getElementById('shareScreenBtn').addEventListener('click', shareHelp);
@@ -65,14 +72,53 @@ const Game = (() => {
     Board.render(puzzle, els.board);
     Wheel.setLetters(puzzle.letters);
     updateHud();
+    refreshMeta();
     els.winOverlay.classList.add('hidden');
+  }
+
+  function refreshMeta() {
+    if (els.streakNum) els.streakNum.textContent = State.streak;
+    if (els.jarBadge) els.jarBadge.textContent = State.jar + '/' + JAR_GOAL;
+    updateJarBar();
+    updateStats();
+    updateExtraList();
+  }
+
+  function updateJarBar() {
+    const fill = document.getElementById('jarFill');
+    const prog = document.getElementById('jarProg');
+    if (fill) fill.style.width = Math.min(100, (State.jar / JAR_GOAL) * 100) + '%';
+    if (prog) prog.textContent = State.jar + '/' + JAR_GOAL;
+    if (els.jarBadge) els.jarBadge.textContent = State.jar + '/' + JAR_GOAL;
+  }
+
+  function updateExtraList() {
+    const list = document.getElementById('extraList');
+    if (!list) return;
+    const words = [...foundBonus];
+    list.innerHTML = words.length
+      ? words.map(w => '<span>' + w + '</span>').join('')
+      : '<span class="extra-empty">None yet — trace extra words for coins!</span>';
+  }
+
+  function updateStats() {
+    const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+    set('stLevels', State.levelsDone); set('stWords', State.wordsFound);
+    set('stBonus', State.bonusFound); set('stStreak', State.bestStreak);
+    set('homeStreak', State.streak); set('homeCoins', State.coins);
+    set('homeLevels', State.levelsDone); set('homeLevel', State.level);
+  }
+
+  function openExtra() {
+    updateExtraList(); updateJarBar();
+    document.getElementById('extraOverlay').classList.remove('hidden');
   }
 
   function onSubmit(raw) {
     const word = raw.toUpperCase();
     const res = Board.submitWord(word);
     if (res === 'found') {
-      Sound.found(); haptic(15);
+      Sound.found(); haptic(15); State.recordWord();
       if (Board.isComplete()) return win();
       return;
     }
@@ -83,9 +129,16 @@ const Game = (() => {
       if (foundBonus.has(word)) { toast('Already found'); Sound.tap(); return; }
       foundBonus.add(word);
       State.addCoins(BONUS_COINS);
+      State.recordBonus();
       updateHud();
       Sound.bonus(); haptic(20);
-      toast('Bonus +' + BONUS_COINS + ' ◉');
+      updateExtraList(); updateJarBar();
+      if (State.jar >= JAR_GOAL) {         // jar full → milestone reward
+        State.resetJar(); State.addCoins(JAR_REWARD); updateHud(); updateJarBar();
+        confetti(); toast('✨ Jar full! +' + JAR_REWARD + ' ◉');
+      } else {
+        toast('Bonus +' + BONUS_COINS + ' ◉');
+      }
       return;
     }
     Sound.wrong(); haptic([0, 25, 40, 25]);
@@ -120,7 +173,8 @@ const Game = (() => {
     Sound.win(); haptic([0, 40, 30, 60]);
     confetti();
     State.addCoins(WIN_REWARD);
-    updateHud();
+    State.recordLevel();
+    updateHud(); updateStats();
     els.winReward.textContent = WIN_REWARD;
     setTimeout(() => els.winOverlay.classList.remove('hidden'), 550);
   }
@@ -277,5 +331,5 @@ const Game = (() => {
     setTimeout(() => { p.classList.remove('shake'); p.classList.remove('show'); }, 360);
   }
 
-  return { init, loadLevel };
+  return { init, loadLevel, refreshHome: updateStats };
 })();

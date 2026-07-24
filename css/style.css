@@ -151,7 +151,7 @@ body {
 
 /* ---------- Overlays ---------- */
 .overlay {
-  position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center;
+  position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center;
   background: rgba(0,0,0,.45); backdrop-filter: blur(3px);
 }
 .overlay.hidden { display: none; }
@@ -189,3 +189,44 @@ body {
 .overlay-actions { display: flex; gap: 10px; }
 .overlay-actions .secondary-btn, .overlay-actions .primary-btn { flex: 1; margin: 0; padding: 13px 10px; }
 .splash-version { margin: 18px 0 0; font-size: 12px; font-weight: 600; opacity: .7; letter-spacing: .5px; }
+
+/* ---------- HUD streak + jar ---------- */
+.hud-left { display: flex; align-items: center; gap: 10px; }
+.streak { background: rgba(0,0,0,.2); padding: 4px 10px; border-radius: 14px; font-weight: 800; font-size: 14px; backdrop-filter: blur(4px); }
+#jarBtn { font-size: 20px; }
+
+/* ---------- Home screen ---------- */
+.home {
+  position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, #8fc0ff 0%, #cfe6ff 52%, #a7d9a0 100%);
+  padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom); color: #2a2f45;
+}
+.home.hidden { display: none; }
+.home-inner { text-align: center; width: min(92vw, 420px); animation: rise .4s ease; }
+.home-logo { width: 92px; height: 92px; filter: drop-shadow(0 8px 20px rgba(0,0,0,.22)); }
+.home-title { font-size: 40px; font-weight: 800; margin: 12px 0 2px; color: #2a4a8f; }
+.home-tagline { margin: 0 0 22px; font-weight: 700; letter-spacing: 3px; font-size: 12px; text-transform: uppercase; color: #4a5a7a; }
+.home-stats { display: flex; gap: 10px; margin: 0 0 24px; }
+.home-stats > div { flex: 1; background: rgba(255,255,255,.72); border-radius: 16px; padding: 12px 6px; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+.home-stats b { display: block; font-size: 22px; color: #2a4a8f; }
+.home-stats small { font-size: 11px; color: #667; font-weight: 700; }
+.play-btn {
+  width: 100%; border: none; background: #34c759; color: #fff; font-weight: 800; font-size: 22px;
+  padding: 18px; border-radius: 20px; cursor: pointer; box-shadow: 0 6px 18px rgba(52,199,89,.4);
+}
+.play-btn:active { transform: translateY(1px); }
+.text-btn { margin-top: 14px; border: none; background: none; color: #3a5a9f; font-weight: 700; font-size: 15px; cursor: pointer; text-decoration: underline; }
+
+/* ---------- Extra words / jar ---------- */
+.extra-list { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; min-height: 34px; margin-bottom: 14px; }
+.extra-list span { background: #eef1f8; color: #33405e; font-weight: 800; padding: 5px 12px; border-radius: 12px; font-size: 14px; letter-spacing: 1px; }
+.extra-empty { background: none !important; color: #99a !important; font-weight: 600 !important; letter-spacing: 0 !important; }
+.jar-bar { height: 12px; background: #e7eaf2; border-radius: 8px; overflow: hidden; margin: 6px 0 6px; }
+.jar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #46c178, #2fa86a); border-radius: 8px; transition: width .35s ease; }
+.jar-label { color: #667; font-size: 13px; font-weight: 700; margin: 0 0 18px; }
+
+/* ---------- Stats row (menu) ---------- */
+.stats-row { display: flex; gap: 8px; margin: 4px 0 18px; }
+.stats-row > div { flex: 1; background: #f2f4fa; border-radius: 12px; padding: 10px 4px; }
+.stats-row b { display: block; font-size: 19px; color: #2a4a8f; }
+.stats-row span { font-size: 11px; color: #778; font-weight: 700; }
