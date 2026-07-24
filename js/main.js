@@ -1,6 +1,6 @@
 /* main.js — bootstrap: splash, version, load words, register SW, wire overlays. */
 (async function () {
-  const BUILD = { version: '1.5.1', date: '2026-06-24' };
+  const BUILD = { version: '1.6.0', date: '2026-06-24' };
 
   const splash = document.getElementById('splash');
   const splashStart = performance.now();
@@ -25,12 +25,18 @@
   document.getElementById('startBtn').addEventListener('click', () => {
     State.seenHelp = true;
     helpOverlay.classList.add('hidden');
+    document.getElementById('home').classList.remove('hidden');   // reveal home after the intro
     Sound.unlock();
   });
 
+  // Home screen
+  const home = document.getElementById('home');
+  document.getElementById('playBtn').addEventListener('click', () => { home.classList.add('hidden'); Sound.unlock(); });
+  document.getElementById('homeHelpBtn').addEventListener('click', () => helpOverlay.classList.remove('hidden'));
+
   // About / menu panel
   const aboutOverlay = document.getElementById('aboutOverlay');
-  document.getElementById('infoBtn').addEventListener('click', () => aboutOverlay.classList.remove('hidden'));
+  document.getElementById('infoBtn').addEventListener('click', () => { Game.refreshHome(); aboutOverlay.classList.remove('hidden'); });
   document.getElementById('aboutCloseBtn').addEventListener('click', () => aboutOverlay.classList.add('hidden'));
   aboutOverlay.addEventListener('click', (e) => { if (e.target === aboutOverlay) aboutOverlay.classList.add('hidden'); });
   document.getElementById('hardRefreshBtn').addEventListener('click', hardRefresh);
@@ -55,7 +61,9 @@
   function hideSplash() {
     splash.classList.add('hide');
     setTimeout(() => splash.remove(), 500);
-    if (!State.seenHelp) helpOverlay.classList.remove('hidden');
+    Game.refreshHome();
+    if (State.seenHelp) home.classList.remove('hidden');
+    else helpOverlay.classList.remove('hidden');   // first launch: intro first, then home
   }
 
   try {
