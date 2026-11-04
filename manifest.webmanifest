@@ -1,0 +1,19 @@
+{
+  "name": "WordBloom — Relax Word Puzzle",
+  "short_name": "WordBloom",
+  "description": "A calming word-connect crossword puzzle game. Swipe letters to fill the crossword. No timer, no pressure.",
+  "id": ".",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#3f6fd1",
+  "theme_color": "#3f6fd1",
+  "categories": ["games", "word", "puzzle"],
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/icon.svg", "type": "image/svg+xml", "sizes": "any" }
+  ]
+}
