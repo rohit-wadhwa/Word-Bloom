@@ -13,7 +13,7 @@ Calming, no timer, no ads, no pressure. Pure static site — vanilla HTML/CSS/JS
 - **Live:** https://word-bloom-three.vercel.app/
 - **Repository:** `rohit-wadhwa/Word-Bloom` (default branch `main`)
 - **License:** MIT · **Price:** Free
-- **Current version:** `1.5.1` (set in `js/main.js` `BUILD`, shown on splash + ☰ menu)
+- **Current version:** `1.6.0` (set in `js/main.js` `BUILD`, shown on splash + ☰ menu)
 
 > Original, independent work. Not affiliated with or derived from any other word
 > game. The name and all code/content are original.
@@ -27,8 +27,8 @@ Calming, no timer, no ads, no pressure. Pure static site — vanilla HTML/CSS/JS
   `rohit-wadhwa <2290963+rohit-wadhwa@users.noreply.github.com>`.
   **No `Co-Authored-By` trailers, no Claude/model identifiers, no session links**
   in commit messages or any pushed artifact. All commits go to the personal
-  profile only. (History was rewritten once to remove a SourceFuse-email commit
-  and Claude trailers — keep it clean.)
+  profile only. (History was rewritten once so every commit uses this identity
+  with no extra trailers — keep it clean.)
 
 ## Architecture
 
@@ -44,7 +44,7 @@ Calming, no timer, no ads, no pressure. Pure static site — vanilla HTML/CSS/JS
 | `js/game.js` | Controller: words, coins, hints, shuffle, win, themes, confetti, haptics, share, restart |
 | `js/main.js` | Bootstrap: splash, `BUILD` version, SW register, About menu, hard refresh |
 | `data/words.txt` | ~6,500 common English words (3–8 letters, dictionary-validated) |
-| `sw.js` | Service worker (offline). **Bump `CACHE` every release** (currently `wordbloom-v6`) |
+| `sw.js` | Service worker (offline). **Bump `CACHE` every release** (currently `wordbloom-v7`) |
 | `manifest.webmanifest` | PWA manifest (installable) |
 | `assets/` | App icons (svg + 192/512/apple-touch/favicon png, rasterized from `icon.svg`) |
 
@@ -114,6 +114,9 @@ Calming, no timer, no ads, no pressure. Pure static site — vanilla HTML/CSS/JS
   `PATCH /git/refs/heads/main`) using the env `GITHUB_TOKEN`, with `author`/
   `committer` set to the noreply identity above. On a normal local machine,
   plain `git push` to `main` works.
+- **`main` is protected** (require PR, no force-push/deletion). Ship changes via a
+  feature branch → PR → merge (e.g. the MCP `create_branch` → `push_files` →
+  `create_pull_request` → `merge_pull_request` flow), not a direct push.
 - The sandbox `GITHUB_TOKEN` is a **GitHub App** token with `contents`/PR write
   but **NOT `administration`** — it cannot set branch protection, change default
   branch, or rename branches (returns `403 Resource not accessible by
@@ -139,11 +142,12 @@ Calming, no timer, no ads, no pressure. Pure static site — vanilla HTML/CSS/JS
 `CHANGELOG.md` · `PRIVACY-POLICY.md` · `LICENSE` (MIT) · `README.md`.
 
 ## Pending / Backlog
-- **Branch protection on `main`** (require PR/review, block force-push/deletion)
-  — needs repo Admin; do in Settings → Branches or via a PAT.
 - **Open Graph image + meta tags** for rich link previews when the game is shared.
-- Bonus-word jar with milestone rewards · level-select / chapters screen ·
-  daily puzzle · wire `BUILD.version` to the git commit hash at deploy time.
+- Level-select / chapters screen · daily puzzle · wire `BUILD.version` to the
+  git commit hash at deploy time.
+
+> Done since the handoff: branch protection on `main`, home screen, daily streak,
+> and the bonus-word "Extra Words" jar with milestone rewards (v1.6.0).
 
 ## Run Locally
 ```bash
