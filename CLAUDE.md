@@ -11,7 +11,7 @@ Calming, no timer, no ads, no pressure. Pure static site — vanilla HTML/CSS/JS
 **no build step, no dependencies**.
 
 - **Live:** https://word-bloom-three.vercel.app/
-- **Repository:** `rohit-wadhwa/Word-Bloom` (default branch `main`)
+- **Repository:** `rohit-wadhwa/Word-Bloom` (default branch `master`)
 - **License:** MIT · **Price:** Free
 - **Current version:** `1.6.0` (set in `js/main.js` `BUILD`, shown on splash + ☰ menu)
 
@@ -104,19 +104,21 @@ Calming, no timer, no ads, no pressure. Pure static site — vanilla HTML/CSS/JS
 
 ## Deploy & Repo Mechanics
 
-- `main` is default and **auto-deploys to Vercel** (project lives under the
+- `master` is default and **auto-deploys to Vercel** (project lives under the
   owner's **personal** Vercel scope `rohit-wadhwa-s-projects`, not a team).
+  **Vercel's Production Branch must be set to `master`** (Project → Settings →
+  Git), since the old default `main` was deleted.
 - **Releasing a change:** edit files → bump `BUILD.version` in `js/main.js` and
-  `CACHE` in `sw.js` → update `CHANGELOG.md` → commit to `main`.
-- **Pushing from the Claude Code remote sandbox:** the git proxy only allows the
-  originally-authorized branch, so `git push origin main` fails there. Deploys
-  were done via the **GitHub Git Data API** (`POST /git/trees`, `/git/commits`,
-  `PATCH /git/refs/heads/main`) using the env `GITHUB_TOKEN`, with `author`/
-  `committer` set to the noreply identity above. On a normal local machine,
-  plain `git push` to `main` works.
-- **`main` is protected** (require PR, no force-push/deletion). Ship changes via a
-  feature branch → PR → merge (e.g. the MCP `create_branch` → `push_files` →
-  `create_pull_request` → `merge_pull_request` flow), not a direct push.
+  `CACHE` in `sw.js` → update `CHANGELOG.md` → PR into `master` → merge.
+- **Pushing from the Claude Code remote sandbox:** the git proxy allows pushing
+  **new** branches (after `add_repo` with `access:"push"`) but blocks ref
+  *deletes* and most direct GitHub API writes. The GitHub MCP tools
+  (`create_branch` → `push_files` → `create_pull_request` → `merge_pull_request`)
+  are the write path. On a normal local machine, plain `git push` works.
+- **`master` is protected** (require PR, no force-push/deletion). Ship changes via
+  a feature branch → PR → merge, not a direct push. Deleting branches or changing
+  the default branch needs repo Admin (the sandbox App token lacks
+  `administration`), so those are done by the owner in the GitHub UI.
 - The sandbox `GITHUB_TOKEN` is a **GitHub App** token with `contents`/PR write
   but **NOT `administration`** — it cannot set branch protection, change default
   branch, or rename branches (returns `403 Resource not accessible by
@@ -146,7 +148,8 @@ Calming, no timer, no ads, no pressure. Pure static site — vanilla HTML/CSS/JS
 - Level-select / chapters screen · daily puzzle · wire `BUILD.version` to the
   git commit hash at deploy time.
 
-> Done since the handoff: branch protection on `main`, home screen, daily streak,
+> Done since the handoff: single-commit `master` as default (old `main` deleted),
+> branch protection, home screen, daily streak,
 > and the bonus-word "Extra Words" jar with milestone rewards (v1.6.0).
 
 ## Run Locally
